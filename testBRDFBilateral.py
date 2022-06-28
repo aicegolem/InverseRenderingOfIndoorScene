@@ -382,7 +382,8 @@ for i, dataBatch in enumerate(brdfLoader):
     utils.writeNpErrToFile('depthAccu', np.mean(depthErrsNpList[1:j+1, :], axis=0), testingLog, epoch, j)
 
 
-    if j == 1 or j% 200 == 0:
+    #if j == 1 or j% 200 == 0:
+    if True:
         # Save the ground truth and the input
         vutils.save_image(( (albedoBatch ) ** (1.0/2.2) ).data,
                 '{0}/{1}_albedoGt.png'.format(opt.testRoot, j) )
@@ -410,20 +411,20 @@ for i, dataBatch in enumerate(brdfLoader):
                     '{0}/{1}_segAll.png'.format(opt.testRoot, j) )
 
 
-        # Save the predicted results
-        for n in range(0, len(albedoPreds) ):
-            vutils.save_image( ( (albedoPreds[n] ) ** (1.0/2.2) ).data,
-                    '{0}/{1}_albedoPred_{2}.png'.format(opt.testRoot, j, n) )
-        for n in range(0, len(normalPreds) ):
-            vutils.save_image( ( 0.5*(normalPreds[n] + 1) ).data,
-                    '{0}/{1}_normalPred_{2}.png'.format(opt.testRoot, j, n) )
-        for n in range(0, len(roughPreds) ):
-            vutils.save_image( ( 0.5*(roughPreds[n] + 1) ).data,
-                    '{0}/{1}_roughPred_{2}.png'.format(opt.testRoot, j, n) )
-        for n in range(0, len(depthPreds) ):
-            depthOut = 1 / torch.clamp(depthPreds[n] + 1, 1e-6, 10) * segAllBatch.expand_as(depthPreds[n])
-            vutils.save_image( ( depthOut * segAllBatch.expand_as(depthPreds[n]) ).data,
-                    '{0}/{1}_depthPred_{2}.png'.format(opt.testRoot, j, n) )
+        # # Save the predicted results
+        # for n in range(0, len(albedoPreds) ):
+        #     vutils.save_image( ( (albedoPreds[n] ) ** (1.0/2.2) ).data,
+        #             '{0}/{1}_albedoPred_{2}.png'.format(opt.testRoot, j, n) )
+        # for n in range(0, len(normalPreds) ):
+        #     vutils.save_image( ( 0.5*(normalPreds[n] + 1) ).data,
+        #             '{0}/{1}_normalPred_{2}.png'.format(opt.testRoot, j, n) )
+        # for n in range(0, len(roughPreds) ):
+        #     vutils.save_image( ( 0.5*(roughPreds[n] + 1) ).data,
+        #             '{0}/{1}_roughPred_{2}.png'.format(opt.testRoot, j, n) )
+        # for n in range(0, len(depthPreds) ):
+        #     depthOut = 1 / torch.clamp(depthPreds[n] + 1, 1e-6, 10) * segAllBatch.expand_as(depthPreds[n])
+        #     vutils.save_image( ( depthOut * segAllBatch.expand_as(depthPreds[n]) ).data,
+        #             '{0}/{1}_depthPred_{2}.png'.format(opt.testRoot, j, n) )
 
         # Save the predicted results
         for n in range(0, len(albedoBsPreds) ):
@@ -439,12 +440,14 @@ for i, dataBatch in enumerate(brdfLoader):
             depthOut = 1 / torch.clamp(depthBsPreds[n] + 1, 1e-6, 10) * segAllBatch.expand_as(depthPreds[n])
             vutils.save_image( ( depthOut * segAllBatch.expand_as(depthBsPreds[n]) ).data,
                     '{0}/{1}_depthPredBs_{2}.png'.format(opt.testRoot, j, n) )
-
+            # Add for saving intermidiate stage prediction
+            torch.save( ( depthOut * segAllBatch.expand_as(depthBsPreds[n]) ).data,
+                    '{0}/{1}_depthPredBs_{2}.pth'.format(opt.testRoot, j, n) )
         vutils.save_image( albedoConf, '{0}/{1}_albedoConf.png'.format(opt.testRoot, j) )
         vutils.save_image( normalConf, '{0}/{1}_normalConf.png'.format(opt.testRoot, j) )
         vutils.save_image( roughConf, '{0}/{1}_roughConf.png'.format(opt.testRoot, j) )
         vutils.save_image( depthConf, '{0}/{1}_depthConf.png'.format(opt.testRoot, j) )
-
+    break # for testing
 
 testingLog.close()
 

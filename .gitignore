@@ -1,0 +1,4 @@
+check_*
+testBs*/*
+__pycache__/*
+**.pth

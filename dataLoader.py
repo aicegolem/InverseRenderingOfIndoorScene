@@ -13,9 +13,11 @@ import scipy.ndimage as ndimage
 
 
 class BatchLoader(Dataset):
-    def __init__(self, dataRoot, dirs = ['main_xml', 'main_xml1',
-        'mainDiffLight_xml', 'mainDiffLight_xml1', 
-        'mainDiffMat_xml', 'mainDiffMat_xml1'], 
+    def __init__(self, dataRoot, 
+        # dirs = ['main_xml', 'main_xml1',
+        # 'mainDiffLight_xml', 'mainDiffLight_xml1', 
+        # 'mainDiffMat_xml', 'mainDiffMat_xml1'],
+        dirs = ['main_xml'],
             imHeight = 240, imWidth = 320, 
             phase='TRAIN', rseed = None, cascadeLevel = 0,
             isLight = False, isAllLight = False,
@@ -25,7 +27,8 @@ class BatchLoader(Dataset):
         if phase.upper() == 'TRAIN':
             self.sceneFile = osp.join(dataRoot, 'train.txt')
         elif phase.upper() == 'TEST':
-            self.sceneFile = osp.join(dataRoot, 'test.txt') 
+            self.sceneFile = osp.join(dataRoot, 'train.txt')
+            # self.sceneFile = osp.join(dataRoot, 'test.txt')
         else:
             print('Unrecognized phase for data loader')
             assert(False ) 
@@ -56,7 +59,9 @@ class BatchLoader(Dataset):
 
         self.imList = []
         for shape in shapeList:
+            #print(shape)
             imNames = sorted(glob.glob(osp.join(shape, 'im_*.hdr') ) )
+            #print(imNames)
             self.imList = self.imList + imNames
 
         if isAllLight:
@@ -70,7 +75,6 @@ class BatchLoader(Dataset):
 
 
         print('Image Num: %d' % len(self.imList ) )
-
         # BRDF parameter
         self.albedoList = [x.replace('im_', 'imbaseColor_').replace('hdr', 'png') for x in self.imList ] 
 
